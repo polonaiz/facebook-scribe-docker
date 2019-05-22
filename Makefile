@@ -6,12 +6,15 @@ build:
 clean:
 	docker rmi -f 'polonaiz/facebook-scribe'
 
+setup:
+	sudo mkdir -p /data/log/scribe/default_primary
+	sudo mkdir -p /data/log/scribe/default_secondary
+	sudo chown -R ${USER}.${USER} /data/log/scribe
+
 stop:
 	docker rm -f 'scribe'
 
 start:
-	mkdir -p /data/log/scribe/default_primary
-	mkdir -p /data/log/scribe/default_secondary
 	docker run \
 		--rm \
 		--detach \
