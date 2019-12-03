@@ -1,5 +1,5 @@
 ##
-FROM centos:6 as builder
+FROM centos:7 as builder
 
 RUN yum install -y \
 	automake libtool flex bison pkgconfig gcc-c++ \
@@ -37,18 +37,18 @@ RUN cd /tmp/scribe && \
 RUN cp /tmp/scribe/examples/scribe_* /usr/local/bin/
 
 ##
-FROM centos:6
+FROM centos:7
 
 RUN yum install -y \
 	boost-system boost-filesystem libevent
 
-COPY --from=builder /usr/lib64/python2.6/site-packages/thrift /usr/lib64/python2.6/site-packages/thrift
-COPY --from=builder /usr/lib64/python2.6/site-packages/thrift-* /usr/lib64/python2.6/site-packages/
-COPY --from=builder /usr/lib/python2.6/site-packages/fb303 /usr/lib/python2.6/site-packages/fb303
-COPY --from=builder /usr/lib/python2.6/site-packages/fb303_scripts /usr/lib/python2.6/site-packages/fb303_scripts
-COPY --from=builder /usr/lib/python2.6/site-packages/fb303-* /usr/lib/python2.6/site-packages/
-COPY --from=builder /usr/lib/python2.6/site-packages/scribe /usr/lib/python2.6/site-packages/scribe
-COPY --from=builder /usr/lib/python2.6/site-packages/scribe-* /usr/lib/python2.6/site-packages/
+COPY --from=builder /usr/lib64/python2.7/site-packages/thrift /usr/lib64/python2.7/site-packages/thrift
+COPY --from=builder /usr/lib64/python2.7/site-packages/thrift-* /usr/lib64/python2.7/site-packages/
+COPY --from=builder /usr/lib/python2.7/site-packages/fb303 /usr/lib/python2.7/site-packages/fb303
+COPY --from=builder /usr/lib/python2.7/site-packages/fb303_scripts /usr/lib/python2.7/site-packages/fb303_scripts
+COPY --from=builder /usr/lib/python2.7/site-packages/fb303-* /usr/lib/python2.7/site-packages/
+COPY --from=builder /usr/lib/python2.7/site-packages/scribe /usr/lib/python2.7/site-packages/scribe
+COPY --from=builder /usr/lib/python2.7/site-packages/scribe-* /usr/lib/python2.7/site-packages/
 COPY --from=builder /usr/local/bin/* /usr/local/bin/
 COPY --from=builder /usr/local/lib/* /usr/local/lib/
 RUN cd /usr/local/lib/ && \
