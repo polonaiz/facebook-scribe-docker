@@ -20,7 +20,8 @@ start:
 		--detach \
 		--name 'scribe' \
 		--publish 1463:1463 \
-		--mount type=bind,source=/data/log/scribe/,destination=/data/log/scribe/,consistency=consistent \
+		--mount type=bind,source=/mnt/c/data/log/scribe/,destination=/data/log/scribe/,consistency=consistent \
+		--mount type=bind,source=$(shell pwd)/default.conf,destination=/etc/scribe/default.conf,consistency=consistent \
 		polonaiz/facebook-scribe
 
 test:
