@@ -4,7 +4,7 @@ RUNTIME_NAME='scribe'
 all: build
 
 build:
-	docker build . --tag ${RUNTIME_TAG} --squash
+	docker build . --tag ${RUNTIME_TAG}
 
 clean:
 	docker rmi -f ${RUNTIME_TAG}
