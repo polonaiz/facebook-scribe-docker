@@ -23,7 +23,7 @@ start:
 		--detach \
 		--name ${RUNTIME_NAME} \
 		--publish 1463:1463 \
-		--mount type=bind,source=/mnt/c/data/log/scribe/,destination=/data/log/scribe/,consistency=consistent \
+		--mount type=bind,source=/data/lib/scribe/,destination=/data/log/scribe/,consistency=consistent \
 		--mount type=bind,source=$(shell pwd)/default.conf,destination=/etc/scribe/default.conf,consistency=consistent \
 		${RUNTIME_TAG}
 
@@ -40,7 +40,7 @@ foreground-start:
 
 test:
 	docker exec -it ${RUNTIME_NAME} bash -c 'date | scribe_cat test; sleep 1'
-	tail /data/log/scribe/default_primary/test/test_current
+	tail /data/lib/scribe/default_primary/test/test_current
 
 push:
 	docker login
