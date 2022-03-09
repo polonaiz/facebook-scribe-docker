@@ -62,5 +62,7 @@ RUN echo "/usr/local/lib" > /etc/ld.so.conf.d/scribed.conf && \
 	ldconfig
 
 ADD default.conf /etc/scribe/default.conf
+RUN mkdir -p /data/lib/scribe/default_primary
+RUN mkdir -p /data/lib/scribe/default_secondary
 
 CMD ["/usr/local/bin/scribed", "-c", "/etc/scribe/default.conf"]

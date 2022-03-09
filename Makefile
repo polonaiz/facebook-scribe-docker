@@ -10,8 +10,8 @@ clean:
 	docker rmi -f ${RUNTIME_TAG}
 
 setup:
-	sudo mkdir -p /data/log/scribe/default_primary
-	sudo mkdir -p /data/log/scribe/default_secondary
+	sudo mkdir -p /data/lib/scribe/default_primary
+	sudo mkdir -p /data/lib/scribe/default_secondary
 	sudo chown -R ${USER}.${USER} /data/log/scribe
 
 stop:
@@ -23,7 +23,7 @@ start:
 		--detach \
 		--name ${RUNTIME_NAME} \
 		--publish 1463:1463 \
-		--mount type=bind,source=/data/lib/scribe/,destination=/data/log/scribe/,consistency=consistent \
+		--mount type=bind,source=/data/lib/scribe/,destination=/data/lib/scribe/,consistency=consistent \
 		--mount type=bind,source=$(shell pwd)/default.conf,destination=/etc/scribe/default.conf,consistency=consistent \
 		${RUNTIME_TAG}
 
@@ -34,7 +34,7 @@ foreground-start:
 		-t \
 		--name ${RUNTIME_NAME} \
 		-p 1463:1463 \
-		-v /data/log/scribe:/data/log/scribe \
+		-v /data/lib/scribe:/data/lib/scribe \
 		--mount type=bind,source=$(shell pwd)/default.conf,destination=/etc/scribe/default.conf,consistency=consistent \
 		${RUNTIME_TAG}
 

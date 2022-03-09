@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: scribe-deployment
+spec:
+  selector:
+    matchLabels:
+      app: scribe-pod
+  replicas: 1
+
+  template:
+    metadata:
+      labels:
+        app: scribe-pod
+    spec:
+      containers:
+        - name: scribe-container
+          image: polonaiz/facebook-scribe
+          imagePullPolicy: Never
+          resources:
+            limits:
+              memory: 1Gi
+              cpu: 500m
+          ports:
+            - containerPort: 1463
