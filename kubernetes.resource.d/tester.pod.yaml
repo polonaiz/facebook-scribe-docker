@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: scribe-tester
+spec:
+  restartPolicy: Never
+  containers:
+    - name: scribe-test-cli-container
+      image: polonaiz/facebook-scribe
+      command: ["/bin/sh", "-c", "--"]
+      args: ["while true; do sleep 30; done;"]
+      resources:
+        limits:
+          memory: "256Mi"
+          cpu: "100m"
