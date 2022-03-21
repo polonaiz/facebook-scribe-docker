@@ -1,0 +1,113 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: gitsync-cronjob
+
+spec:
+  schedule: "*/10 * * * *"
+  concurrencyPolicy: Allow
+  startingDeadlineSeconds: 300
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1
+  suspend: false
+  jobTemplate:
+    spec:
+      completions: 1
+      parallelism: 1
+      backoffLimit: 1
+      template:
+        spec:
+          containers:
+          - name: fb-collector
+            image: bie/cronjob-test-fb-gaming
+            command: 
+              #['bin/bash', '-c']
+              - "php"
+            #  - "sleep"
+
+            #args:
+            # - "50000"
+            args:
+            #  - sleep 30;
+            #    php data/lib/git/gitsync-kubernetes-fb-gaming.git/bin/collector-fb-gaming-report-cli collectDetailReport;
+                
+              
+              - "data/lib/git/gitsync-kubernetes-fb-gaming.git/bin/collector-fb-gaming-report-cli"
+              - "collectDetailReport"
+            # - "--date=2022-02-25"
+            # - "ls"
+            # - "bin"
+            imagePullPolicy: Never
+            volumeMounts:
+              - mountPath: /data/lib/collector-fb-gaming-report
+                name: lib
+              - name: gittest
+                mountPath: /data/lib/git
+            ports:
+              - containerPort: 1463
+          initContainers:
+          - name: git-sync
+            image: k8s.gcr.io/git-sync:v3.1.5
+            resources:
+              limits:
+                cpu: 500m
+                memory: 128Mi
+            imagePullPolicy: Always
+            args:
+              - "--ssh=true"
+              - "--repo=git@github.com:c2s-bie/gitsync-kubernetes-fb-gaming.git"
+              - "--root=/git"
+              - "--branch=master"
+              #- "--depth=1"
+              - "--one-time=true"
+              - "--change-permissions=0777"
+              - "--timeout=600"
+
+            # - "--dest=git-sync"
+              
+            #env:
+            #- name: GIT_SYNC_REPO
+            #  value: git@github.com:zxc157/git-sync-test-private.git
+            #- name: GIT_SYNC_BRANCH
+            #  value: master
+            #- name: GIT_SYNC_ROOT
+            #  value: /git
+            #- name: GIT_SYNC_PERMISSIONS
+            #  value: "0777"
+            #- name: GIT_SYNC_ONE_TIME
+            #  value: "true"
+            #- name: GIT_SYNC_SSH
+            #  value: "true"
+            securityContext:
+              runAsUser: 65533
+              #runAsUser: 0
+            volumeMounts:
+            - name: gittest
+              mountPath: /git
+            - name: git-secret
+              mountPath: /etc/git-secret
+
+            
+
+          volumes:
+            
+            - name: gittest
+              #emptyDir: {}
+              #hostPath:
+              #  path: /run/desktop/mnt/host/c/data/lib/git-sync
+              persistentVolumeClaim:
+                claimName: gitsync-pvc
+            - name: git-secret
+              secret:
+                secretName: git-creds
+                defaultMode: 0400
+            - name: lib
+              hostPath:
+                path: /run/desktop/mnt/host/c/data/lib/collector-fb-gaming-report
+          securityContext:
+            fsGroup: 65533 # to make SSH key readable
+
+          
+
+          
+          restartPolicy: Never
