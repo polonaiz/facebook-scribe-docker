@@ -39,6 +39,8 @@ RUN cp /tmp/scribe/examples/scribe_* /usr/local/bin/
 ##
 FROM centos:7
 
+RUN yum upgrade -y 
+
 RUN yum install -y \
 	boost-system boost-filesystem libevent
 
