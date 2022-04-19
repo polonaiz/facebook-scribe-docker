@@ -50,25 +50,35 @@ foreground-start:
 		--mount type=bind,source=$(shell pwd)/default.conf,destination=/etc/scribe/default.conf,consistency=consistent \
 		${RUNTIME_TAG}
 
-kube-install:
-	kubectl config current-context
+kube-scribe-install:
 	kubectl apply -f ./kubernetes.resource.d/scribe.yaml
 
-kube-tail-test:
-	kubectl exec scribe-656475dd78-n4d7n -it -- tail -F /data/lib/scribe/default_primary/test/test_current
+kube-scribe-bash:
+	kubectl exec scribe-0 -it -- sh -c 'cd /data/lib/scribe/default_primary/test/;bash'
 
-kube-delete:
+kube-scribe-tail:
+	kubectl exec scribe-0 -it -- tail -F /data/lib/scribe/default_primary/test/test_current
+
+kube-scribe-uninstall:
 	kubectl delete service scribe
-	kubectl delete deployments.apps scribe
-	kubectl delete pvc scribe-data-pvc
+	kubectl delete statefulsets.apps scribe
+	kubectl delete pvc scribe-data-scribe-0
 
-kube-install-tester:
+kube-tester-install:
 	kubectl apply -f ./kubernetes.resource.d/tester.pod.yaml
 
-kube-test-tester:
+kube-tester-test:
 	kubectl exec scribe-tester -it -- bash -c 'echo -------- | scribe_cat -h scribe test'
 	kubectl exec scribe-tester -it -- bash -c 'date | scribe_cat -h scribe test'
 	kubectl exec scribe-tester -it -- bash -c 'hostname | scribe_cat -h scribe test'
 
-kube-delete-tester:
+kube-tester-uninstall:
 	kubectl delete pod scribe-tester
+
+kube-clean: kube-tester-uninstall kube-scribe-uninstall
+
+helm-package:
+	helm package ./helm.chart
+
+helm-push:
+	helm push scribe-0.0.1.tgz 
